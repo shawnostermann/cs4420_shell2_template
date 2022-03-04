@@ -1,6 +1,6 @@
 #
 # Sample lex/yacc Makefile
-# Shawn Ostermann - Sun Feb  1, 1998
+# Shawn Ostermann - Far 4, 2022
 #
 CFLAGS = -g -Wall -Werror -O2
 CC = gcc
@@ -25,9 +25,8 @@ OBJECTS = y.tab.o lex.yy.o ${OFILES}
 
 
 # How to make the whole program
-# (don't forget the Lex Library "-ll")
 ${PROGRAM} : ${OBJECTS}
-	${CC} ${CFLAGS} ${OBJECTS} -o ${PROGRAM} -ll
+	${CC} ${CFLAGS} ${OBJECTS} -o ${PROGRAM} 
 
 
 # 
