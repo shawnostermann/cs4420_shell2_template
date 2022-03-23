@@ -45,7 +45,7 @@ cp tmp.pathname tmpdir.dir/dir2/
 echo "This should fail"
 tmp.pathname
 PATH=/bin:./tmpdir.dir/dir1:./tmpdir.dir/dir2
-printenv PATH
+/usr/bin/printenv PATH
 tmp.pathname
 PATH=/bin:./tmpdir.dir/dir2:./tmpdir.dir/dir1
 tmp.pathname
@@ -64,7 +64,6 @@ END
 # this is the correct output
 # this is the output they should create
 cat > $TEST.correct << 'END'
-STARTING
 Path Testing
 /bin:/usr/bin
 /bin:/usr/bin
@@ -79,7 +78,7 @@ this time tmp.myecho should work
 ==================== path test3 ====================
 This should fail
 tmp.pathname: command not found
-printenv: command not found
+/bin:./tmpdir.dir/dir1:./tmpdir.dir/dir2
 I was called as './tmpdir.dir/dir1/tmp.pathname'
 I was called as './tmpdir.dir/dir2/tmp.pathname'
 tmp.pathname: command not found
@@ -92,7 +91,7 @@ END
 
 # don't change anything else
 echo "export PS1=''; ./bash < $0.input; exit" | script -q > /dev/null 2>&1
-sed 's/\r//g' typescript | grep STARTING -A 100000 | awk '/exit/{exit} {print}' > $TEST.myoutput
+sed 's/\r//g' typescript | grep STARTING -A 100000 | grep -v STARTING | awk '/exit/{exit} {print}' | grep  -v '^Script done' | egrep -v '^$' > $TEST.myoutput
 
 if cmp -s $TEST.correct $TEST.myoutput; then
     echo "PASSES"; exit 0

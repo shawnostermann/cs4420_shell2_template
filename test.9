@@ -22,32 +22,37 @@ echo "Pipe test"
 
 echo "if you don't implement pipes, then you need good messages saying so!"
 
-echo "Quick dictionary test!"
-cat < /usr/share/dict/words | egrep '^[a-z]{20}$' | tr a-z A-Z  | grep UNCHAR
+echo "Quick directory test!"
+cat < test.8 | egrep '[a-z]{5,99}' | tr a-z A-Z | grep -i secret | grep DENIED | sort | uniq
 
 echo "This should run, but generate errors in the stderr log files"
 cat /badfile1 2>tmp.e1 | cat /badfile2 2>tmp.e2 | cat /badfile3 2>tmp.e3
 ./tmp.stat tmp.e1 tmp.e2 tmp.e3
+
+echo "And this should generate 3 syntax errors"
+cat /badfile1 <tmp.i1 | cat /badfile2 <tmp.i2 | cat /badfile3 <tmp.i3
 
 END
 
 # this is the correct output
 # this is the output they should create
 cat > $TEST.correct << 'END'
-STARTING
 Pipe test
 if you don't implement pipes, then you need good messages saying so!
-Quick dictionary test!
-UNCHARACTERISTICALLY
+Quick directory test!
+TMP.SECRET: PERMISSION DENIED
 This should run, but generate errors in the stderr log files
 -rw-r--r--      1      7     42 tmp.e1
 -rw-r--r--      1      7     42 tmp.e2
 -rw-r--r--      1      7     42 tmp.e3
+And this should generate 3 syntax errors
+Error on line 15: illegal redirection
+Error on line 15: illegal redirection
 END
 
 # don't change anything else
 echo "export PS1=''; ./bash < $0.input; exit" | script -q > /dev/null 2>&1
-sed 's/\r//g' typescript | grep STARTING -A 100000 | awk '/exit/{exit} {print}' > $TEST.myoutput
+sed 's/\r//g' typescript | grep STARTING -A 100000 | grep -v STARTING | awk '/exit/{exit} {print}' | grep  -v '^Script done' | egrep -v '^$' > $TEST.myoutput
 
 
 if cmp -s $TEST.correct $TEST.myoutput; then

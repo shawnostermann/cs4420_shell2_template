@@ -40,7 +40,6 @@ END
 # this is the correct output
 # this is the output they should create
 cat > $TEST.correct << END
-STARTING
 File closing test
 Open a bunch of empty files
 Make sure you're not leaving files open
@@ -49,7 +48,7 @@ END
 
 # don't change anything else
 echo "export PS1=''; ./bash < $0.input; exit" | script -q > /dev/null 2>&1
-sed 's/\r//g' typescript | grep STARTING -A 100000 | awk '/exit/{exit} {print}' > $TEST.myoutput
+sed 's/\r//g' typescript | grep STARTING -A 100000 | grep -v STARTING | awk '/exit/{exit} {print}' | grep  -v '^Script done' | egrep -v '^$' > $TEST.myoutput
 
 
 if cmp -s $TEST.correct $TEST.myoutput; then
