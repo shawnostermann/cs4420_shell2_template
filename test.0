@@ -5,26 +5,28 @@ PATH=/bin:/usr/bin
 TEST=$0
 
 # this is the input lines to use
-cat > $0.input << END
+export PS1="prompt>> "
+cat > $0.input << 'END'
 echo STARTING
-echo "Variable Setting Test"
-/usr/bin/printenv VAR
-VAR=myshell
-/usr/bin/printenv VAR
-VAR="testing 1 2 3"
-/usr/bin/printenv VAR
-PATH=/bin/:/usr/bin:/usr/local/bin:/nosuchdir/bin
-/usr/bin/printenv PATH
+echo "Prompt test"
+PS1="prompt ONE>> "
+/bin/echo hello line 1
+PS1="Anything for you boss>> "
+/bin/echo hello line 2
+PS1=""
+/bin/echo last test
+/bin/echo
 END
 
 # this is the correct output
 # this is the output they should create
-cat > $TEST.correct << END
+cat > $TEST.correct << 'END'
 STARTING
-Variable Setting Test
-myshell
-testing 1 2 3
-/bin/:/usr/bin:/usr/local/bin:/nosuchdir/bin
+Prompt test
+prompt ONE>> hello line 1
+prompt ONE>> Anything for you boss>> hello line 2
+Anything for you boss>> last test
+
 END
 
 # don't change anything else
