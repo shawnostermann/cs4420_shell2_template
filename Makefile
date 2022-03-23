@@ -1,8 +1,8 @@
 #
 # Sample lex/yacc Makefile
-# Shawn Ostermann - Far 4, 2022
+# Shawn Ostermann - Mar 23, 2022
 #
-CFLAGS = -g -Wall -Werror -O2
+CFLAGS = -g -Wall -Werror -O2 -g
 CC = gcc
 
 PROGRAM = bash
@@ -26,7 +26,7 @@ OBJECTS = y.tab.o lex.yy.o ${OFILES}
 
 # How to make the whole program
 ${PROGRAM} : ${OBJECTS}
-	${CC} ${CFLAGS} ${OBJECTS} -o ${PROGRAM} 
+	${CC} ${CFLAGS} ${OBJECTS} -o ${PROGRAM}
 
 
 # 
@@ -50,7 +50,7 @@ parser.h: y.tab.h
 lex.yy.c : scanner.l parser.h ${HFILE}
 	lex ${LFLAGS} scanner.l
 lex.yy.o: lex.yy.c
-	${CC} -g -c lex.yy.c
+	${CC} -Wall -Werror -Wno-unused-function -g -c lex.yy.c
 
 #
 # File dependencies
@@ -59,10 +59,15 @@ ${OFILES}: ${HFILE} parser.h
 
 test: bash
 	-chmod a+rx ./test.?
-	-for TEST in ./test.?; do echo "$$TEST:"; $$TEST; done
-
+	-for TEST in ./test.?; do echo "$$TEST: "; $$TEST; done
 	
+clean: cleanbuild cleantest
 
-clean:
-	/bin/rm -f *.o lex.yy.c parser.tab.c ${PROGRAM} parser.h parser.output *.tab.c *.tab.h core test.*.myoutput test.*.correct test.*.input
 
+cleantest:
+	/bin/rm -f *.o lex.yy.c y.output parser.tab.c ${PROGRAM} parser.h parser.output *.tab.c *.tab.h core 
+
+cleanbuild:
+	/bin/rm -f test.*.myoutput test.*.correct test.*.input test.*.unixoutput tmp.* typescript
+	/bin/rm -rf tmpdir.dir
+	
