@@ -30,7 +30,7 @@ I have 2 arguments
 END
 
 # don't change anything else
-./bash -p < $0.input > $TEST.myoutput 2>&1
+export PS1=""; ./bash < $0.input > $TEST.myoutput 2>&1
 if cmp -s $TEST.correct $TEST.myoutput; then
     echo "PASSES"; exit 0
 else
